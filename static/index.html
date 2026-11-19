@@ -2,44 +2,90 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a0b2e">
 <title>FAAAAH</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😱</text></svg>">
 <style>
   * { box-sizing: border-box; margin: 0; }
   html, body { height: 100%; }
   body {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
-    background: #111; color: #fff; font-family: system-ui, sans-serif;
-    overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.2rem;
+    font-family: "Arial Black", "Helvetica Neue", system-ui, sans-serif;
+    color: #fff; overflow: hidden; user-select: none; -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    background: linear-gradient(135deg, #1a0b2e, #3b0d4a, #0b1a3a, #1a0b2e);
+    background-size: 400% 400%; animation: bg 14s ease infinite;
   }
-  h1 { font-size: clamp(2.5rem, 12vw, 6rem); letter-spacing: .05em; transition: transform .1s; }
+  @keyframes bg { 0%,100% { background-position: 0% 50% } 50% { background-position: 100% 50% } }
+
+  h1 {
+    font-size: clamp(2.4rem, 11vw, 5.5rem); font-weight: 900; letter-spacing: .04em;
+    max-width: 92vw; overflow-wrap: anywhere; text-align: center; line-height: 1;
+    background: linear-gradient(90deg, #ffd23f, #ff5e5b, #ff3cac);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 4px 18px #ff3cac66);
+  }
+
+  .wrap { position: relative; display: grid; place-items: center; }
+  .ring {
+    position: absolute; inset: 0; border-radius: 50%; border: 3px solid #ff5e5b;
+    animation: ring 2.4s ease-out infinite; pointer-events: none;
+  }
+  .ring:nth-child(2) { animation-delay: 1.2s; }
+  @keyframes ring { from { transform: scale(1); opacity: .7 } to { transform: scale(1.5); opacity: 0 } }
+
   button {
-    width: min(70vw, 280px); aspect-ratio: 1; border-radius: 50%; border: none; cursor: pointer;
-    background: radial-gradient(circle at 35% 30%, #ff6b6b, #c0392b 60%, #7b1c12);
-    box-shadow: 0 12px 0 #5a140d, 0 20px 40px #0008;
-    color: #fff; font-size: clamp(1.5rem, 7vw, 2.5rem); font-weight: 900;
-    transition: transform .06s, box-shadow .06s;
+    position: relative; width: min(66vw, 270px); aspect-ratio: 1; border-radius: 50%;
+    border: none; cursor: pointer; color: #fff;
+    font: 900 clamp(1.4rem, 7vw, 2.3rem) "Arial Black", system-ui, sans-serif; letter-spacing: .06em;
+    text-shadow: 0 3px 0 #0004;
+    background: radial-gradient(circle at 35% 28%, #ff8a80 0%, #ff3b3b 35%, #c4161c 70%, #7a0b10 100%);
+    box-shadow: 0 14px 0 #4d0609, 0 24px 50px #000a, inset 0 -10px 24px #0005, inset 0 8px 18px #fff4;
+    transition: transform .07s, box-shadow .07s;
   }
-  button:active { transform: translateY(10px); box-shadow: 0 2px 0 #5a140d, 0 8px 20px #0008; }
-  #count { opacity: .6; font-size: 1.1rem; }
-  .shake { animation: shake .4s; }
+  button.down {
+    transform: translateY(12px) scale(.98);
+    box-shadow: 0 2px 0 #4d0609, 0 8px 22px #000a, inset 0 -6px 16px #0006, inset 0 6px 14px #fff3;
+  }
+
+  #count { font: 700 1.05rem system-ui, sans-serif; opacity: .7; letter-spacing: .05em; }
+
+  .pop {
+    position: fixed; pointer-events: none; font-weight: 900; white-space: nowrap;
+    transform: translate(-50%, -50%); animation: pop 1s ease-out forwards;
+    text-shadow: 0 4px 12px #0008;
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(.4) rotate(var(--r)) }
+    15% { opacity: 1; transform: translate(-50%, -60%) scale(1.15) rotate(var(--r)) }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), -260%) scale(.9) rotate(var(--r)) }
+  }
+
+  .shake { animation: shake .35s, bg 14s ease infinite; }
   @keyframes shake {
-    0%,100% { transform: translate(0,0) rotate(0) }
-    20% { transform: translate(-6px,3px) rotate(-2deg) }
-    40% { transform: translate(6px,-3px) rotate(2deg) }
-    60% { transform: translate(-4px,2px) rotate(-1deg) }
-    80% { transform: translate(4px,-2px) rotate(1deg) }
+    0%,100% { translate: 0 0 } 20% { translate: -7px 3px } 40% { translate: 7px -3px }
+    60% { translate: -4px 2px } 80% { translate: 4px -2px }
   }
+  .flash { position: fixed; inset: 0; background: #ff3cac; opacity: 0; pointer-events: none; }
+  .flash.on { animation: flash .25s ease-out; }
+  @keyframes flash { from { opacity: .25 } to { opacity: 0 } }
 </style>
 </head>
 <body>
+  <div class="flash" id="flash"></div>
   <h1 id="title">FAAAAH</h1>
-  <button id="btn" aria-label="Crier">APPUIE</button>
+  <div class="wrap">
+    <span class="ring"></span><span class="ring"></span>
+    <button id="btn" aria-label="Crier FAAAAH">APPUIE</button>
+  </div>
   <p id="count">0 faaah</p>
 <script>
   const btn = document.getElementById("btn");
   const title = document.getElementById("title");
   const count = document.getElementById("count");
+  const flash = document.getElementById("flash");
+  const colors = ["#ffd23f", "#ff5e5b", "#ff3cac", "#5ef2ff", "#b4ff5e"];
   let n = 0, ctx = null, buffer = null;
 
   async function load() {
@@ -48,23 +94,48 @@
     buffer = await ctx.decodeAudioData(data);
   }
 
-  btn.addEventListener("pointerdown", async () => {
+  function pop(x, y) {
+    const el = document.createElement("span");
+    el.className = "pop";
+    el.textContent = "F" + "A".repeat(2 + Math.floor(Math.random() * 5)) + "H" + "!".repeat(1 + Math.floor(Math.random() * 3));
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.style.color = colors[Math.floor(Math.random() * colors.length)];
+    el.style.fontSize = (1.4 + Math.random() * 1.4) + "rem";
+    el.style.setProperty("--r", (Math.random() * 30 - 15) + "deg");
+    el.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+    document.body.appendChild(el);
+    el.addEventListener("animationend", () => el.remove());
+  }
+
+  function restart(el, cls) {
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+  }
+
+  btn.addEventListener("pointerdown", async (e) => {
+    btn.classList.add("down");
     if (!ctx) await load();
     if (ctx.state === "suspended") await ctx.resume();
     const src = ctx.createBufferSource();
     src.buffer = buffer;
-    src.playbackRate.value = 0.95 + Math.random() * 0.1; // chaque cri est un peu différent
+    src.playbackRate.value = 0.95 + Math.random() * 0.1;
     src.connect(ctx.destination);
     src.start();
 
     n++;
     count.textContent = n + (n > 1 ? " faaahs" : " faaah");
-    title.textContent = "F" + "A".repeat(4 + Math.min(n, 20)) + "H";
-    document.body.classList.remove("shake");
-    void document.body.offsetWidth;
-    document.body.classList.add("shake");
+    title.textContent = "F" + "A".repeat(4 + Math.min(n, 12)) + "H";
+    pop(e.clientX, e.clientY);
+    restart(document.body, "shake");
+    restart(flash, "on");
     if (navigator.vibrate) navigator.vibrate(80);
   });
+  const up = () => btn.classList.remove("down");
+  btn.addEventListener("pointerup", up);
+  btn.addEventListener("pointerleave", up);
+  btn.addEventListener("pointercancel", up);
 </script>
 </body>
 </html>
