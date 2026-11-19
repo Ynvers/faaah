@@ -1,8 +1,11 @@
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
-
-
-@app.get("/")
-def root() -> dict[str, str]:
-    return {"msg": "Hello Clever Cloud"}
+app.mount(
+    "/",
+    StaticFiles(directory=Path(__file__).parent / "static", html=True),
+    name="static",
+)

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAAAAH</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+    background: #111; color: #fff; font-family: system-ui, sans-serif;
+    overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  h1 { font-size: clamp(2.5rem, 12vw, 6rem); letter-spacing: .05em; transition: transform .1s; }
+  button {
+    width: min(70vw, 280px); aspect-ratio: 1; border-radius: 50%; border: none; cursor: pointer;
+    background: radial-gradient(circle at 35% 30%, #ff6b6b, #c0392b 60%, #7b1c12);
+    box-shadow: 0 12px 0 #5a140d, 0 20px 40px #0008;
+    color: #fff; font-size: clamp(1.5rem, 7vw, 2.5rem); font-weight: 900;
+    transition: transform .06s, box-shadow .06s;
+  }
+  button:active { transform: translateY(10px); box-shadow: 0 2px 0 #5a140d, 0 8px 20px #0008; }
+  #count { opacity: .6; font-size: 1.1rem; }
+  .shake { animation: shake .4s; }
+  @keyframes shake {
+    0%,100% { transform: translate(0,0) rotate(0) }
+    20% { transform: translate(-6px,3px) rotate(-2deg) }
+    40% { transform: translate(6px,-3px) rotate(2deg) }
+    60% { transform: translate(-4px,2px) rotate(-1deg) }
+    80% { transform: translate(4px,-2px) rotate(1deg) }
+  }
+</style>
+</head>
+<body>
+  <h1 id="title">FAAAAH</h1>
+  <button id="btn" aria-label="Crier">APPUIE</button>
+  <p id="count">0 faaah</p>
+<script>
+  const btn = document.getElementById("btn");
+  const title = document.getElementById("title");
+  const count = document.getElementById("count");
+  let n = 0, ctx = null, buffer = null;
+
+  async function load() {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const data = await (await fetch("faah.wav")).arrayBuffer();
+    buffer = await ctx.decodeAudioData(data);
+  }
+
+  btn.addEventListener("pointerdown", async () => {
+    if (!ctx) await load();
+    if (ctx.state === "suspended") await ctx.resume();
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    src.playbackRate.value = 0.85 + Math.random() * 0.35; // chaque cri est un peu différent
+    src.connect(ctx.destination);
+    src.start();
+
+    n++;
+    count.textContent = n + (n > 1 ? " faaahs" : " faaah");
+    title.textContent = "F" + "A".repeat(4 + Math.min(n, 20)) + "H";
+    document.body.classList.remove("shake");
+    void document.body.offsetWidth;
+    document.body.classList.add("shake");
+    if (navigator.vibrate) navigator.vibrate(80);
+  });
+</script>
+</body>
+</html>
